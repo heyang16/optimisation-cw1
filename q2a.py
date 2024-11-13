@@ -8,6 +8,9 @@ n = len(noisy_data)
 L = np.zeros((n, n))
 np.fill_diagonal(L, 1)
 L[np.arange(n - 1), np.arange(1, n)] = -1
+# Delete the last row of L
+L = L[:-1, :]
+L = L * (n - 1)
 
 def rls(w, f):
     return np.linalg.inv(np.identity(n) + w * (np.transpose(L) @ L)).dot(f)
@@ -20,9 +23,9 @@ denoised_signals = [rls(w, noisy_data) for w in regularization_weights]
 
 # Plot the results
 plt.figure(figsize=(12, 6))
-plt.plot(noisy_data, label='Noisy Signal')
+plt.scatter(np.linspace(0, n, n), noisy_data, s=2, c='r', label='Noisy Signal')
 for i, w in enumerate(regularization_weights):
-    plt.plot(denoised_signals[i], label=f'Denoised Signal (w={w})', linestyle='--')
+    plt.plot(denoised_signals[i], label=f'Denoised Signal (w={w})')
 
 plt.xlabel('Sample Index')
 plt.ylabel('Signal Value')
